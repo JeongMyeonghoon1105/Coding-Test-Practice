@@ -1,12 +1,12 @@
-f = [1, 1]
+memo = [0, 1]
 
-def fibonacci(n):
+def f(n):
   if n <= 1:
-    return 1
-  if len(f) != n:
-    f.append(fibonacci(n-1))
-  return f[n-1]+f[n-2]
+    return n
+  if len(memo) != n:
+    memo.append(f(n-1))
+  return memo[n-1]+memo[n-2]
 
 n = int(input())
-print(fibonacci(n))
-print(f)
+print(f(n))
+print(memo)
