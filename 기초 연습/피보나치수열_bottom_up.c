@@ -2,14 +2,15 @@
 
 #define LIMIT 100000
 
-int memo[LIMIT] = {0, 1};
+unsigned long long int memo[LIMIT] = {0, 1};
 
-int f(int n) {
+unsigned long long int f(int n) {
     if (n <= 1)
         return n;
-    else if (n > LIMIT)
+    if (n > LIMIT) {
         fprintf(stderr, "Out of range.\n");
-        return -1;
+        return 0;
+    }
     for (int i = 2; i <= n; i++)
         memo[i] = memo[i-1] + memo[i-2];
     return memo[n];
@@ -17,6 +18,6 @@ int f(int n) {
 
 int main() {
     int n;  scanf("%d", &n);
-    printf("%d", f(n));
+    printf("%llu", f(n));
     return 0;
 }
