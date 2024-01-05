@@ -16,18 +16,22 @@ void init(HeapType *H) {
         H->heap[i] = -1;
 }
 
+int isLeaf(HeapType *H, int index) {
+    return H->heap[index * 2] == -1 && H->heap[index * 2 + 1] == -1;
+}
+
+void swap(HeapType *H, int a, int b) {
+    element temp = H->heap[a];
+    H->heap[a] = H->heap[b];
+    H->heap[b] = temp;
+}
+
 void insert(HeapType *H, element e) {
     H->heap[H->rear] = e;
-    int child = H->rear;
-    if (child) {
-        int parent = child / 2, temp;
-        while (parent >= 1 && H->heap[parent] > H->heap[child]) {
-            temp = H->heap[parent];
-            H->heap[parent] = H->heap[child];
-            H->heap[child] = temp;
-            child = parent;
-            parent = child / 2;
-        }
+    int pos = H->rear;
+    while (pos >= 1 && H->heap[pos] < H->heap[pos / 2]) {
+        swap(H, pos, pos / 2);
+        pos /= 2;
     }
     H->rear++;
 }
@@ -35,13 +39,27 @@ void insert(HeapType *H, element e) {
 element delete(HeapType *H) {
     if (H->rear == 1)
         return 0;
-    int e = H->heap[0];
-    H->heap[0] = H->heap[H->rear];
+    int e = H->heap[1];
+    H->heap[1] = H->heap[H->rear-1];
     H->heap[H->rear] = -1;
     H->rear--;
 
+    int p = 1, lc = p * 2, rc = p * 2 + 1;
+    while ((H->heap[p] > H->heap[lc] || H->heap[p] > H->heap[rc]) && !isLeaf(H, p)) {
+        lc = p * 2, rc = p * 2 + 1;
+        if (H->heap[lc] < H->heap[rc]) {
+            swap(H, p, lc);
+            p *= 2;
+        } else {
+            swap(H, p, rc);
+            p = p * 2 + 1;
+        }
+    }
+
+    /*
     int parent = 1, lc = 2, rc = 3, temp;
-    while (parent < H->rear && (H->heap[parent] < H->heap[lc] || H->heap[parent] < H->heap[rc])) {
+    while (!(H->heap[lc] == -1 && H->heap[rc] == -1) && (H->heap[parent] < H->heap[lc] || H->heap[parent] < H->heap[rc])) {
+    // while (parent < H->rear && (H->heap[parent] < H->heap[lc] || H->heap[parent] < H->heap[rc])) {
         lc = parent * 2, rc = parent * 2 + 1;
         if (H->heap[parent] < H->heap[lc] && H->heap[parent] < H->heap[rc]) {
             if (H->heap[lc] > H->heap[rc]) {
@@ -67,6 +85,7 @@ element delete(HeapType *H) {
             parent = rc;
         }
     }
+    */
 
     return e;
 }
