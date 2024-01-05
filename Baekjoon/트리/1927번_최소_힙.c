@@ -19,7 +19,7 @@ void init(HeapType *H) {
 void insert(HeapType *H, element e) {
     H->heap[H->rear] = e;
     int child = H->rear;
-    if (!(child)) {
+    if (child) {
         int parent = child / 2, temp;
         while (parent >= 1 && H->heap[parent] > H->heap[child]) {
             temp = H->heap[parent];
