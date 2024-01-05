@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <stdbool.h>
 
+#define true 1
+#define false 0
 #define N 100001
 
 typedef int element;
@@ -17,6 +18,8 @@ void init(HeapType *H) {
 }
 
 int isLeaf(HeapType *H, int index) {
+    if (index * 2 >= N)
+        return true;
     return H->heap[index * 2] == -1 && H->heap[index * 2 + 1] == -1;
 }
 
@@ -41,11 +44,11 @@ element delete(HeapType *H) {
         return 0;
     int e = H->heap[1];
     H->heap[1] = H->heap[H->rear-1];
-    H->heap[H->rear] = -1;
+    H->heap[H->rear-1] = -1;
     H->rear--;
 
     int p = 1, lc = p * 2, rc = p * 2 + 1;
-    while ((H->heap[p] > H->heap[lc] || H->heap[p] > H->heap[rc]) && !isLeaf(H, p)) {
+    while (((H->heap[p] > H->heap[lc] && H->heap[lc] != -1) || (H->heap[p] > H->heap[rc] && H->heap[rc] != -1)) && !isLeaf(H, p)) {
         lc = p * 2, rc = p * 2 + 1;
         if (H->heap[lc] < H->heap[rc]) {
             swap(H, p, lc);
@@ -55,37 +58,6 @@ element delete(HeapType *H) {
             p = p * 2 + 1;
         }
     }
-
-    /*
-    int parent = 1, lc = 2, rc = 3, temp;
-    while (!(H->heap[lc] == -1 && H->heap[rc] == -1) && (H->heap[parent] < H->heap[lc] || H->heap[parent] < H->heap[rc])) {
-    // while (parent < H->rear && (H->heap[parent] < H->heap[lc] || H->heap[parent] < H->heap[rc])) {
-        lc = parent * 2, rc = parent * 2 + 1;
-        if (H->heap[parent] < H->heap[lc] && H->heap[parent] < H->heap[rc]) {
-            if (H->heap[lc] > H->heap[rc]) {
-                temp = H->heap[parent];
-                H->heap[parent] = H->heap[lc];
-                H->heap[lc] = temp;
-                parent = lc;
-            } else {
-                temp = H->heap[parent];
-                H->heap[parent] = H->heap[rc];
-                H->heap[rc] = temp;
-                parent = rc;
-            }
-        } else if (H->heap[parent] < H->heap[lc]) {
-            temp = H->heap[parent];
-            H->heap[parent] = H->heap[lc];
-            H->heap[lc] = temp;
-            parent = lc;
-        } else if (H->heap[parent] < H->heap[rc]) {
-            temp = H->heap[parent];
-            H->heap[parent] = H->heap[rc];
-            H->heap[rc] = temp;
-            parent = rc;
-        }
-    }
-    */
 
     return e;
 }
@@ -109,6 +81,6 @@ int main() {
         else
             printf("%d\n", delete(&h));
         
-        print(&h);
+        // print(&h);
     }
 }
